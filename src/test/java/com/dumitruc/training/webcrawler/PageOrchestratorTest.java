@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 public class PageOrchestratorTest {
 
     @Test
-    public void scansUrlsFromList() {
+    public void scansUrlsFromList() throws InterruptedException {
         BlockingQueue upcomingWork = new LinkedBlockingDeque();
         BlockingQueue foundUrls = new LinkedBlockingDeque();
 
@@ -38,7 +38,8 @@ public class PageOrchestratorTest {
         pageOrchestratorSpy.run();
 
         assertThat("Didn't take element from the queue", upcomingWork.size(), equalTo(0));
-        assertThat("Didn't take element from the queue", foundUrls.size(), equalTo(2));
+        assertThat("Didn't take element from the queue", foundUrls.size(), equalTo(1));
+        assertThat("Didn't take element from the queue", ((PageUrlDetails)foundUrls.take()).getFoundUrls().size(), equalTo(2));
 
     }
 

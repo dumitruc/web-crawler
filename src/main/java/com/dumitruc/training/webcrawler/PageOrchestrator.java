@@ -27,18 +27,16 @@ public class PageOrchestrator implements Runnable {
             PageParser pageParser = getPageParser(urlString);
             List<String> newlyFoundUrls = pageParser.extractUrls();
 
+            PageUrlDetails pageUrlDetails = new PageUrlDetails(urlString, newlyFoundUrls);
 
-
-            addNewlyFoundUrlsToQueue(newlyFoundUrls);
+            addNewlyFoundUrlsToQueue(pageUrlDetails);
         }
         logger.debug(String.format("\tNo work, upcoming work queue size: %s", upcomingWork.size()));
     }
 
-    private void addNewlyFoundUrlsToQueue(List<String> newlyFoundUrls) {
-        newlyFoundUrls.forEach(nfUrl -> {
-            foundUrls.add(nfUrl);
-            logger.debug(String.format("\tAdded URL to found queue [%s]", nfUrl));
-        });
+    private void addNewlyFoundUrlsToQueue(PageUrlDetails newlyFoundUrls) {
+        foundUrls.add(newlyFoundUrls);
+        logger.debug(String.format("\tAdded URLs found on [%s] to found queue ", newlyFoundUrls.getPageUrl()));
     }
 
     public PageParser getPageParser(String initUrl) {
