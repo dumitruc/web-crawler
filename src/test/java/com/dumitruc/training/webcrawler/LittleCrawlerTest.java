@@ -12,7 +12,7 @@ public class LittleCrawlerTest {
     public void initTakesValidUrls(){
         LittleCrawler littleCrawler = new LittleCrawler();
         String urlString = "https://www.bbc.co.uk";
-        littleCrawler.run(new String[]{urlString});
+        littleCrawler.setHome(new String[]{urlString});
 
         assertThat(littleCrawler.foundUrls.size(),equalTo(1));
         assertThat(littleCrawler.foundUrls.peek(),equalTo(urlString));
@@ -22,7 +22,7 @@ public class LittleCrawlerTest {
     public void initIgnoresInvalidUrls(){
         LittleCrawler littleCrawler = new LittleCrawler();
         String urlString = "this is not a url";
-        littleCrawler.run(new String[]{urlString});
+        littleCrawler.setHome(new String[]{urlString});
 
         assertThat(littleCrawler.foundUrls.size(),equalTo(0));
     }
@@ -31,7 +31,7 @@ public class LittleCrawlerTest {
     public void initiIgnoresInvalidUrlsRegistersValidOnes(){
         LittleCrawler littleCrawler = new LittleCrawler();
         String urlString = "https://www.bbc.co.uk";
-        littleCrawler.run(new String[]{"some invalid URL",urlString,"https://"});
+        littleCrawler.setHome(new String[]{"some invalid URL",urlString,"https://"});
         assertThat(littleCrawler.foundUrls.size(),equalTo(1));
         assertThat(littleCrawler.foundUrls.peek(),equalTo(urlString));
 

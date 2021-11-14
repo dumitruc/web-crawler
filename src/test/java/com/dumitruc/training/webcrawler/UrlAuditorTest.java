@@ -56,6 +56,8 @@ public class UrlAuditorTest {
         invalidUrls.add("http:///bbc.co.uk");
         invalidUrls.add("http://bbc.c");
         invalidUrls.add("http://----");
+        invalidUrls.add("www.bbc.co.uk");
+        invalidUrls.add("bbc.co.uk");
 
         invalidUrls.forEach(vu ->
                 assertThat(String.format("Expecting invalid URL, [%s] was considered valid", vu),

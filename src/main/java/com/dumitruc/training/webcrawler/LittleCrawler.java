@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 
 public class LittleCrawler {
 
@@ -19,23 +18,37 @@ public class LittleCrawler {
     HashMap<String, PageUrlDetails> completedWork = new HashMap<>();
     final List<String> homePool = new ArrayList<>();
 
+
+
     public void run(String[] args) {
 
         setHome(args);
 
-        // // Init working queues, lists, variables
+        //Thread pools to enable control
+        ExecutorService pageParsers = Executors.newCachedThreadPool();
+        ExecutorService urlMasterService = Executors.newSingleThreadExecutor();
 
-        // Start thread orchestration
-        // run in loop (until no more work)
-        // // Start URL Master
-        // // Start crawlies
+        // TODO: 14/11/2021 conditions to be decided
+        while (true) {
+            urlMasterService.submit(new UrlMaster());
+
+            // TODO: 14/11/2021 conditions to be decided
+            if(true){
+                pageParsers.submit(new PageOrchestrator(upcomingWork, foundUrls));
+            }
+
+        }
+
+
+
+
         // stop in-flight threads
 
         //Print out the results
 
     }
 
-    private void setHome(String[] args) {
+    public void setHome(String[] args) {
         Arrays.stream(args).forEach(url -> {
             if (UrlAuditor.isValidUrl(url)) {
                 addNewFoundUrl(url);
@@ -47,7 +60,7 @@ public class LittleCrawler {
         try {
             foundUrls.put(nfUrl);
         } catch (InterruptedException e) {
-            logger.error("Could not add [%s] to the found URL queue", nfUrl);
+            logger.error(String.format("Could not add [%s] to the found URL queue", nfUrl));
             logger.error(e.getMessage());
         }
     }
