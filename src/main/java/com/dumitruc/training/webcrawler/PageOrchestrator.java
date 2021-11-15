@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 public class PageOrchestrator implements Runnable {
-    private final BlockingQueue upcomingWork;
-    private final BlockingQueue foundUrls;
+    private final BlockingQueue<String> upcomingWork;
+    private final BlockingQueue<PageUrlDetails> foundUrls;
 
-    private static Logger logger = LogManager.getLogger(PageOrchestrator.class);
+    private static final Logger logger = LogManager.getLogger(PageOrchestrator.class);
 
-    public PageOrchestrator(BlockingQueue upcomingWork, BlockingQueue foundUrls) {
+    public PageOrchestrator(BlockingQueue<String> upcomingWork, BlockingQueue<PageUrlDetails> foundUrls) {
         this.upcomingWork = upcomingWork;
         this.foundUrls = foundUrls;
     }
@@ -20,18 +20,15 @@ public class PageOrchestrator implements Runnable {
 
     @Override
     public void run() {
-        if (upcomingWork.size() > 0) {
-            String urlString = getNextUrlToParse(upcomingWork);
-            logger.debug(String.format("Parsing page on URL [%s]", urlString));
+        String urlString = getNextUrlToParse(upcomingWork);
+        logger.debug(String.format("Parsing page on URL [%s]", urlString));
 
-            PageParser pageParser = getPageParser(urlString);
-            List<String> newlyFoundUrls = pageParser.extractUrls();
+        PageParser pageParser = getPageParser(urlString);
+        List<String> newlyFoundUrls = pageParser.extractUrls();
 
-            PageUrlDetails pageUrlDetails = new PageUrlDetails(urlString, newlyFoundUrls);
+        PageUrlDetails pageUrlDetails = new PageUrlDetails(urlString, newlyFoundUrls);
 
-            addNewlyFoundUrlsToQueue(pageUrlDetails);
-        }
-        logger.debug(String.format("\tNo work, upcoming work queue size: %s", upcomingWork.size()));
+        addNewlyFoundUrlsToQueue(pageUrlDetails);
     }
 
     private void addNewlyFoundUrlsToQueue(PageUrlDetails newlyFoundUrls) {
@@ -43,13 +40,14 @@ public class PageOrchestrator implements Runnable {
         return new PageParser(initUrl);
     }
 
-    private String getNextUrlToParse(BlockingQueue upcomingWork) {
+    private String getNextUrlToParse(BlockingQueue<String> upcomingWork) {
         String nextUrl = null;
-
-        try {
-            nextUrl = upcomingWork.take().toString();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        String element = upcomingWork.element();
+        if (element == null) {
+            logger.info("Upcoming work queue empty");
+        } else {
+            nextUrl = element;
+            upcomingWork.remove(nextUrl);
         }
         return nextUrl;
     }

@@ -3,66 +3,83 @@ package com.dumitruc.training.webcrawler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.*;
 
 public class LittleCrawler {
 
-    private static Logger logger = LogManager.getLogger(UrlAuditor.class);
+    private static final Logger logger = LogManager.getLogger(LittleCrawler.class);
 
-    BlockingQueue upcomingWork = new LinkedBlockingDeque();
-    BlockingQueue foundUrls = new LinkedBlockingDeque();
-    HashMap<String, PageUrlDetails> completedWork = new HashMap<>();
-    final List<String> homePool = new ArrayList<>();
+    BlockingQueue<String> upcomingWork;
+    BlockingQueue<PageUrlDetails> foundUrls;
+    HashMap<String, PageUrlDetails> completedWork;
+    public UrlMaster urlMaster;
+    private Integer peakParsersThreads = 0;
 
 
+    public LittleCrawler() {
+        upcomingWork = new LinkedBlockingDeque<String>();
+        foundUrls = new LinkedBlockingDeque<PageUrlDetails>();
+        completedWork = new HashMap<>();
+        urlMaster = new UrlMaster(foundUrls, upcomingWork, completedWork);
+    }
 
     public void run(String[] args) {
 
-        setHome(args);
+        initiateCrawlingRoot(args);
+
 
         //Thread pools to enable control
         ExecutorService pageParsers = Executors.newCachedThreadPool();
-        ExecutorService urlMasterService = Executors.newSingleThreadExecutor();
+        ExecutorService urlMasterService = Executors.newFixedThreadPool(1);
 
-        // TODO: 14/11/2021 conditions to be decided
-        while (true) {
-            urlMasterService.submit(new UrlMaster());
+        while (isMoreCrawlingNeeded(upcomingWork, foundUrls, pageParsers, urlMasterService)) {
+            urlMasterService.submit(urlMaster);
+            pageParsers.submit(new PageOrchestrator(upcomingWork, foundUrls));
 
-            // TODO: 14/11/2021 conditions to be decided
-            if(true){
-                pageParsers.submit(new PageOrchestrator(upcomingWork, foundUrls));
-            }
-
+            systemMonitor(pageParsers, urlMasterService);
         }
 
+        closeTheThreads(pageParsers, urlMasterService);
 
-
-
-        // stop in-flight threads
-
-        //Print out the results
-
+        (new ResultsPublisher(completedWork)).consoleOutAll();
+        systemMonitor(pageParsers, urlMasterService);
     }
 
-    public void setHome(String[] args) {
-        Arrays.stream(args).forEach(url -> {
-            if (UrlAuditor.isValidUrl(url)) {
-                addNewFoundUrl(url);
-            }
-        });
-    }
-
-    private void addNewFoundUrl(String nfUrl) {
-        try {
-            foundUrls.put(nfUrl);
-        } catch (InterruptedException e) {
-            logger.error(String.format("Could not add [%s] to the found URL queue", nfUrl));
-            logger.error(e.getMessage());
+    private void systemMonitor(ExecutorService pageParsers, ExecutorService urlMasterService) {
+        int currentParserThreadCount = ((ThreadPoolExecutor) pageParsers).getActiveCount();
+        if (currentParserThreadCount > peakParsersThreads) {
+            peakParsersThreads = currentParserThreadCount;
         }
+
+        logger.debug("========================================================================================");
+        logger.debug("peakParsersThreads = " + peakParsersThreads);
+        logger.debug("foundUrls.size() = " + foundUrls.size());
+        logger.debug("upcomingWork.size() = " + upcomingWork.size());
+        logger.debug("completedWork.size() = " + completedWork.size());
+        logger.debug("((ThreadPoolExecutor)pageParsers).getActiveCount() = " + currentParserThreadCount);
+        logger.debug("((ThreadPoolExecutor)urlMasterService).getActiveCount() = " + ((ThreadPoolExecutor) urlMasterService).getActiveCount());
     }
+
+    public void initiateCrawlingRoot(String[] args) {
+        urlMaster.setStartingUrls(args);
+    }
+
+    private void closeTheThreads(ExecutorService pageParsers, ExecutorService urlMasterService) {
+        pageParsers.shutdownNow();
+        urlMasterService.shutdownNow();
+    }
+
+    private boolean isMoreCrawlingNeeded(BlockingQueue<String> upcomingWork,
+                                         BlockingQueue<PageUrlDetails> foundUrls,
+                                         ExecutorService pageParsers,
+                                         ExecutorService urlMasterService) {
+
+        return upcomingWork.size() > 0
+                || ((ThreadPoolExecutor) pageParsers).getActiveCount() > 0
+                || ((ThreadPoolExecutor) urlMasterService).getActiveCount() > 0
+                || foundUrls.size() > 0;
+    }
+
 
 }

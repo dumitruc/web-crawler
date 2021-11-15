@@ -15,8 +15,8 @@ public class PageOrchestratorTest {
 
     @Test
     public void scansUrlsFromList() throws InterruptedException {
-        BlockingQueue upcomingWork = new LinkedBlockingDeque();
-        BlockingQueue foundUrls = new LinkedBlockingDeque();
+        BlockingQueue<String> upcomingWork = new LinkedBlockingDeque<String>();
+        BlockingQueue<PageUrlDetails> foundUrls = new LinkedBlockingDeque<PageUrlDetails>();
 
         String testUrl = "https://www.bbc.co.uk";
 

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class PageParser {
 
     private final String pageUrl;
-    private static Logger logger = LogManager.getLogger(PageParser.class);
+    private static final Logger logger = LogManager.getLogger(PageParser.class);
 
     public PageParser(String pageUrl) {
         this.pageUrl = pageUrl;
@@ -50,19 +50,14 @@ public class PageParser {
     }
 
     public List<String> extractUrls() {
-
-        List<String> strings = new ArrayList<>();
-
+        List<String> potentialUrls = new ArrayList<>();
         Elements elements;
         try {
             elements = extractAllElements();
-            strings = extractUrlContenders(elements);
-
+            potentialUrls = extractUrlContenders(elements);
         } catch (IOException e) {
             logger.error(String.format("Couldn't parse the page of url [%s]\n\n%s", pageUrl, e.getMessage()));
         }
-
-
-        return strings;
+        return potentialUrls;
     }
 }
