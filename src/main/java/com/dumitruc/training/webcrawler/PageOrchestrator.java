@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class PageOrchestrator implements Runnable {
     private final BlockingQueue<String> upcomingWork;
@@ -21,14 +22,16 @@ public class PageOrchestrator implements Runnable {
     @Override
     public void run() {
         String urlString = getNextUrlToParse(upcomingWork);
-        logger.debug(String.format("Parsing page on URL [%s]", urlString));
+        if(urlString != null){
+            logger.debug(String.format("Parsing page on URL [%s]", urlString));
 
-        PageParser pageParser = getPageParser(urlString);
-        List<String> newlyFoundUrls = pageParser.extractUrls();
+            PageParser pageParser = getPageParser(urlString);
+            List<String> newlyFoundUrls = pageParser.extractUrls();
 
-        PageUrlDetails pageUrlDetails = new PageUrlDetails(urlString, newlyFoundUrls);
+            PageUrlDetails pageUrlDetails = new PageUrlDetails(urlString, newlyFoundUrls);
 
-        addNewlyFoundUrlsToQueue(pageUrlDetails);
+            addNewlyFoundUrlsToQueue(pageUrlDetails);
+        }
     }
 
     private void addNewlyFoundUrlsToQueue(PageUrlDetails newlyFoundUrls) {
@@ -41,15 +44,7 @@ public class PageOrchestrator implements Runnable {
     }
 
     private String getNextUrlToParse(BlockingQueue<String> upcomingWork) {
-        String nextUrl = null;
-        String element = upcomingWork.element();
-        if (element == null) {
-            logger.info("Upcoming work queue empty");
-        } else {
-            nextUrl = element;
-            upcomingWork.remove(nextUrl);
-        }
-        return nextUrl;
+        return upcomingWork.poll();
     }
 
 

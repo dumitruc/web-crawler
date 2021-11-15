@@ -3,19 +3,17 @@
                status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
         </Console>
         <File name="CrawlerLog" fileName="logs/app.log">
-            <PatternLayout>
-                <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-            </PatternLayout>
+            <PatternLayout pattern="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
         </File>
     </Appenders>
     <Loggers>
         <Logger name="log4j.test.Log4jTest" level="trace">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Root level="trace">
+        <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

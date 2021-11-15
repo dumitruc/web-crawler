@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class UrlMaster implements Runnable {
 
@@ -35,13 +36,20 @@ public class UrlMaster implements Runnable {
 
     @Override
     public void run() {
-//        while (true) {
-        PageUrlDetails pageUrlDetails = foundUrls.peek();
+        PageUrlDetails pageUrlDetails = getPageUrlDetailsFromQueue();
         completedWork.put(pageUrlDetails.getPageUrl(), pageUrlDetails);
         removeProcessed(pageUrlDetails);
         processNewFoundUrls(pageUrlDetails);
-//        }
+    }
 
+    private PageUrlDetails getPageUrlDetailsFromQueue() {
+        PageUrlDetails pageUrlDetails = null;
+        try {
+            pageUrlDetails = foundUrls.poll(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            logger.info(String.format("Could not retrieve from the found urls queue\n%s",e.getMessage()));
+        }
+        return pageUrlDetails;
     }
 
     private void processNewFoundUrls(PageUrlDetails pud) {
