@@ -77,9 +77,9 @@ public class UrlMasterInitTest {
         urlMaster.setStartingUrls(new String[]{inArg});
 
         String expectedOutMessage = String.format("Starting point URL [%s] not valid, please provide " +
-                "valid URL, e.g. https://www.bbc.co.uk\r\n", inArg);
+                "valid URL, e.g. https://www.bbc.co.uk", inArg);
 
-        assertThat(outContent.toString(),
+        assertThat(outContent.toString().trim(),
                 equalTo(expectedOutMessage));
     }
 
