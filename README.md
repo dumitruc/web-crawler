@@ -1,29 +1,28 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This is a basic web crawler, to limit to a particular root, i.e. use for a particular website only.
 
 ### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Java coding exercise
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* Java SDK (8 onwards)
+* Maven
 
-### Contribution guidelines ###
+# To use
+Build the JAR of the application
+```shell
+mvn clean install
+```
 
-* Writing tests
-* Code review
-* Other guidelines
+Build docker image
+```shell
+docker build -t web-crawler .
+```
 
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+Run app on docker
+```shell
+docker run --rm web-crawler "https://whatever...."
+```
