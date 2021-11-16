@@ -11,7 +11,7 @@ This document describes the various ideas and suggestions that are not of immedi
 * More robust URL parsing capabilities, see [galimatias](https://github.com/smola/galimatias) library and comments
 * External library to add unparsable URL types, e.g. media
 * Continuous printout of the completed work
-
+* Avoid "DNS attack" flagged up, put delay between requests
 
 # Suggestions
 * change to a JRE docker image to minimise footprint
@@ -21,6 +21,8 @@ This document describes the various ideas and suggestions that are not of immedi
 
 
 # Decisions
+## Re-use design/approach for large scale
+Basically by using the same approach can be distributed, external apps(eg.kafka,rabitmq,containers)
 ## Single thread object to process URLs
 Avoid complex implementation to parsers to handle duplicate URLs. If we go with recursion, at some point we'll have multiple threads trying to add same URL to completed work list, either lock(becomes slow) or endup with duplicates. Feels like for the size (eg on same host), this is better.
 ## Use of the shelf library to handles web page parsing
@@ -32,3 +34,9 @@ More advanced as from various articles built in java URL is not very good
 ## Wasted effort/processing
 ~~There are cases when same page is parsed by multiple threads.~~
 Sorted - was looking at java 7 api docs.
+
+
+##################
+##################
+ * Configure user agent as a search engine
+ * In case of multiple/complex business rules validation, have async rule processing, whichever validation comes back first. i.e. wait for all to approve only one needed to decline 

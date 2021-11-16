@@ -34,7 +34,7 @@ public class PageParser {
 
     private String urlFromElement(Element el) {
         String urlString = null;
-        String validUrl = el.absUrl("href");
+        String validUrl = el.absUrl(CrawlerConstants.URL_PAGE_PARSER_KEY);
         if (UrlAuditor.isValidUrl(validUrl)) {
             urlString = validUrl;
         }

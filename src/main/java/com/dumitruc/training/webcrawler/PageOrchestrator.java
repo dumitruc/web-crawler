@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 public class PageOrchestrator implements Runnable {
     private final BlockingQueue<String> upcomingWork;
@@ -22,7 +21,7 @@ public class PageOrchestrator implements Runnable {
     @Override
     public void run() {
         String urlString = getNextUrlToParse(upcomingWork);
-        if(urlString != null){
+        if (urlString != null) {
             logger.debug(String.format("Parsing page on URL [%s]", urlString));
 
             PageParser pageParser = getPageParser(urlString);
@@ -46,6 +45,5 @@ public class PageOrchestrator implements Runnable {
     private String getNextUrlToParse(BlockingQueue<String> upcomingWork) {
         return upcomingWork.poll();
     }
-
 
 }

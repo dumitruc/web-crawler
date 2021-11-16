@@ -10,16 +10,16 @@ public class LittleCrawler {
 
     private static final Logger logger = LogManager.getLogger(LittleCrawler.class);
 
-    BlockingQueue<String> upcomingWork;
-    BlockingQueue<PageUrlDetails> foundUrls;
-    HashMap<String, PageUrlDetails> completedWork;
+    private final BlockingQueue<String> upcomingWork;
+    private final BlockingQueue<PageUrlDetails> foundUrls;
+    private final HashMap<String, PageUrlDetails> completedWork;
     public UrlMaster urlMaster;
     private Integer peakParsersThreads = 0;
 
 
     public LittleCrawler() {
-        upcomingWork = new LinkedBlockingDeque<String>();
-        foundUrls = new LinkedBlockingDeque<PageUrlDetails>();
+        upcomingWork = new LinkedBlockingDeque<>();
+        foundUrls = new LinkedBlockingDeque<>();
         completedWork = new HashMap<>();
         urlMaster = new UrlMaster(foundUrls, upcomingWork, completedWork);
     }
@@ -27,7 +27,6 @@ public class LittleCrawler {
     public void run(String[] args) {
 
         initiateCrawlingRoot(args);
-
 
         //Thread pools to enable control
         ExecutorService pageParsers = Executors.newCachedThreadPool();
@@ -81,5 +80,15 @@ public class LittleCrawler {
                 || foundUrls.size() > 0;
     }
 
+    public BlockingQueue<String> getUpcomingWork() {
+        return upcomingWork;
+    }
 
+    public BlockingQueue<PageUrlDetails> getFoundUrls() {
+        return foundUrls;
+    }
+
+    public HashMap<String, PageUrlDetails> getCompletedWork() {
+        return completedWork;
+    }
 }

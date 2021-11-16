@@ -14,8 +14,8 @@ public class LittleCrawlerTest {
         String urlString = "https://www.bbc.co.uk";
         littleCrawler.initiateCrawlingRoot(new String[]{urlString});
 
-        assertThat(littleCrawler.foundUrls.size(),equalTo(1));
-        assertThat(littleCrawler.foundUrls.peek().getFoundUrls().get(0),equalTo(urlString));
+        assertThat(littleCrawler.getFoundUrls().size(),equalTo(1));
+        assertThat(littleCrawler.getFoundUrls().peek().getFoundUrls().get(0),equalTo(urlString));
     }
 
     @Test
@@ -24,7 +24,7 @@ public class LittleCrawlerTest {
         String urlString = "this is not a url";
         littleCrawler.initiateCrawlingRoot(new String[]{urlString});
 
-        assertThat(littleCrawler.foundUrls.size(),equalTo(0));
+        assertThat(littleCrawler.getFoundUrls().size(),equalTo(0));
     }
 
     @Test
@@ -32,8 +32,8 @@ public class LittleCrawlerTest {
         LittleCrawler littleCrawler = new LittleCrawler();
         String urlString = "https://www.bbc.co.uk";
         littleCrawler.initiateCrawlingRoot(new String[]{"some invalid URL",urlString,"https://"});
-        assertThat(littleCrawler.foundUrls.size(),equalTo(1));
-        assertThat(littleCrawler.foundUrls.peek().getFoundUrls().get(0),equalTo(urlString));
+        assertThat(littleCrawler.getFoundUrls().size(),equalTo(1));
+        assertThat(littleCrawler.getFoundUrls().peek().getFoundUrls().get(0),equalTo(urlString));
 
     }
 

@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +49,7 @@ public class UrlMaster implements Runnable {
         try {
             pageUrlDetails = foundUrls.poll(100, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            logger.info(String.format("Could not retrieve from the found urls queue\n%s",e.getMessage()));
+            logger.info(String.format("Could not retrieve from the found urls queue\n%s", e.getMessage()));
         }
         return pageUrlDetails;
     }
@@ -69,7 +71,7 @@ public class UrlMaster implements Runnable {
     private void addUrlToUpcomingWorkQueue(String urlString) {
         try {
             upcomingWork.put(urlString);
-            logger.info(String.format("Url [%s] moved to the upcoming work que to be processed"));
+            logger.info(String.format("Url [%s] moved to the upcoming work que to be processed", urlString));
         } catch (InterruptedException e) {
             logger.error(String.format("Could not add url [%s] to the pending work queue\n%s", urlString, e.getMessage()));
         }
@@ -117,7 +119,7 @@ public class UrlMaster implements Runnable {
             String host = url.getHost();
             rootHosts.add(host);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(String.format("Input argument can not be converted to URL [%s]", e.getMessage()));
         }
     }
 }

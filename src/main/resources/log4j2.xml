@@ -5,7 +5,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
         </Console>
-        <File name="CrawlerLog" fileName="logs/app.log">
+        <File name="CrawlerLog" fileName="logs/web-crawler.log">
             <PatternLayout pattern="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
         </File>
     </Appenders>
@@ -15,6 +15,9 @@
         </Logger>
         <Root level="error">
             <AppenderRef ref="Console"/>
+        </Root>
+        <Root level="trace">
+            <AppenderRef ref="CrawlerLog"/>
         </Root>
     </Loggers>
 </Configuration>

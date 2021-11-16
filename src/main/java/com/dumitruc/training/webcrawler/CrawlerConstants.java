@@ -1,9 +1,10 @@
 package com.dumitruc.training.webcrawler;
 
 public final class CrawlerConstants {
-    private CrawlerConstants() {} //No instantiation;
+    private CrawlerConstants() {
+    } //No instantiation;
 
     public static final String INIT_POINT = "about:blank";
-
-    public static final String[] NON_PAGE_SUFFIXES = new String[]{".jpg",".png",".gif",".mp3",".mv4"};
+    public static final String URL_PAGE_PARSER_KEY = "href";
+    public static final String[] NON_PAGE_SUFFIXES = new String[]{".jpg", ".png", ".gif", ".mp3", ".mv4"};
 }

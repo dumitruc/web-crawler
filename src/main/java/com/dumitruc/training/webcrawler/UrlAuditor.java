@@ -20,7 +20,7 @@ public class UrlAuditor {
     }
 
     public boolean isPassingBusinessRuleValidation(String urlString, List<String> rootHosts) {
-        logger.info(String.format("Validating business rules: [%s]", urlString));
+        logger.debug(String.format("Validating business rules: [%s]", urlString));
         return isSameRoot(urlString, rootHosts)
                 && isParsablePage(urlString);
     }
@@ -39,7 +39,7 @@ public class UrlAuditor {
                 .collect(Collectors.toList())
                 .contains(true);
         if (!isItParsablePage) {
-            logger.info(String.format("[%s] url is not a parsable page", urlString));
+                logger.debug(String.format("[%s] url is not a parsable page", urlString));
         }
         return isItParsablePage;
     }
@@ -49,7 +49,7 @@ public class UrlAuditor {
         try {
             convertedUrl = new URL(stringUrl);
         } catch (MalformedURLException e) {
-            logger.warn(String.format("Could not convert string [%] to url\n%s", stringUrl, e.getMessage()));
+            logger.warn(String.format("Could not convert string [%s] to url\n%s", stringUrl, e.getMessage()));
         }
         return convertedUrl;
     }
