@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class UrlAuditor {
 
     private static final Logger logger = LogManager.getLogger(UrlAuditor.class);
