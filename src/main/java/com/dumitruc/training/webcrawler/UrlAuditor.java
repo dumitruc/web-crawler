@@ -19,20 +19,22 @@ public class UrlAuditor {
         return UrlValidator.getInstance().isValid(urlString);
     }
 
-    public boolean isPassingBusinessRuleValidation(String urlString, List<String> rootHosts) {
-        logger.debug(String.format("Validating business rules: [%s]", urlString));
-        return isSameRoot(urlString, rootHosts)
+    public static boolean isPassingBusinessRuleValidation(String urlString) {
+        boolean isValidAsPeBr = isSameRoot(urlString)
                 && isParsablePage(urlString);
+        logger.debug(String.format("[%s] Business rules validation for page: [%s]",isValidAsPeBr, urlString));
+        return isValidAsPeBr;
     }
 
-    public boolean isSameRoot(String urlString, List<String> rootHostStrings) {
+    public static boolean isSameRoot(String urlString) {
+        List<String> rootHostStrings = UrlMaster.getRootHosts();
         String host = convertToUrl(urlString).getHost();
 
         return rootHostStrings.contains(host);
     }
 
     // TODO: 15/11/2021 Test logic!!!
-    public boolean isParsablePage(String urlString) {
+    public static boolean isParsablePage(String urlString) {
         //Is not a parsable page if is an image or any other media type
         boolean isItParsablePage = !Arrays.stream(CrawlerConstants.NON_PAGE_SUFFIXES)
                 .map(endings -> urlString.endsWith(endings))
@@ -44,7 +46,7 @@ public class UrlAuditor {
         return isItParsablePage;
     }
 
-    private URL convertToUrl(String stringUrl) {
+    private static URL convertToUrl(String stringUrl) {
         URL convertedUrl = null;
         try {
             convertedUrl = new URL(stringUrl);

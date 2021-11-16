@@ -34,15 +34,28 @@ public class LittleCrawler {
 
         while (isMoreCrawlingNeeded(upcomingWork, foundUrls, pageParsers, urlMasterService)) {
             urlMasterService.submit(urlMaster);
-            pageParsers.submit(new PageOrchestrator(upcomingWork, foundUrls));
+            PageOrchestrator pageOrchestrator = new PageOrchestrator(upcomingWork, foundUrls);
+            pageParsers.submit(pageOrchestrator);
 
             systemMonitor(pageParsers, urlMasterService);
+            bePolite();
         }
 
         closeTheThreads(pageParsers, urlMasterService);
 
         (new ResultsPublisher(completedWork)).consoleOutAll();
         systemMonitor(pageParsers, urlMasterService);
+    }
+
+    /**
+     * This method is to add some sort of delay/control as not to overwhelm the websites being crawled.
+     */
+    private void bePolite() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void systemMonitor(ExecutorService pageParsers, ExecutorService urlMasterService) {

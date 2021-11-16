@@ -2,12 +2,16 @@ package com.dumitruc.training.webcrawler;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 
 
 public class UrlAuditorTest {
@@ -22,6 +26,7 @@ public class UrlAuditorTest {
         validUrls.add("HTTPS://b.com");
         validUrls.add("ftp://b.com");
         validUrls.add("https://ru.wikipedia.org/wiki/%D0%92%D0%B8%D0%BA%D0%B8%D0%BF%D0%B5%D0%B4%D0%B8%D1%8F");
+
 
         validUrls.forEach(vu ->
                 assertThat(String.format("Invalid url [%s]", vu),
@@ -47,6 +52,7 @@ public class UrlAuditorTest {
         );
     }
 
+
     @Test
     public void correctlyDetectsInvalidUrls() {
         List<String> invalidUrls = new ArrayList<>();
@@ -58,6 +64,10 @@ public class UrlAuditorTest {
         invalidUrls.add("http://----");
         invalidUrls.add("www.bbc.co.uk");
         invalidUrls.add("bbc.co.uk");
+        invalidUrls.add("gopher://spinaltap.micro.umn.edu/00/Weather/California/Los%20Angeles");
+        invalidUrls.add("mailto:mduerst@ifi.unizh.ch");
+        invalidUrls.add("news:comp.infosystems.www.servers.unix");
+        invalidUrls.add("telnet://melvyl.ucop.edu/");
 
         invalidUrls.forEach(vu ->
                 assertThat(String.format("Expecting invalid URL, [%s] was considered valid", vu),
@@ -66,5 +76,24 @@ public class UrlAuditorTest {
                 )
         );
     }
+
+
+    @Test
+    public void businessLogicValidation(){
+
+        String host = "www.bbc.com";
+        List<String> rootHosts = Collections.singletonList(host);
+
+        String urlString = String.format("https://%s/whatever-next.html",host);
+
+        try (MockedStatic<UrlMaster> theMock = Mockito.mockStatic(UrlMaster.class)) {
+            theMock.when(UrlMaster::getRootHosts).thenReturn(rootHosts);
+
+            assertThat(UrlAuditor.isPassingBusinessRuleValidation(urlString),equalTo(true));
+            assertThat(UrlAuditor.isPassingBusinessRuleValidation("https://bbc.com"),equalTo(false));
+        }
+
+    }
+
 
 }

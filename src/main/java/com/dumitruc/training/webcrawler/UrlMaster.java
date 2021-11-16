@@ -4,8 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,34 +18,31 @@ public class UrlMaster implements Runnable {
     private final BlockingQueue<String> upcomingWork;
     private final HashMap<String, PageUrlDetails> completedWork;
 
-    private List<String> rootHosts;
-    private List<String> rootUrls;
-    private UrlAuditor urlAuditor;
+    private static List<String> rootHosts;
 
     private static final Logger logger = LogManager.getLogger(UrlMaster.class);
 
+    // TODO: 16/11/2021 Ideally insteada of using this in constructor, call these queues from LittleCrawler
     public UrlMaster(BlockingQueue<PageUrlDetails> foundUrls, BlockingQueue<String> upcomingWork, HashMap<String, PageUrlDetails> completedWork) {
         this.foundUrls = foundUrls;
         this.upcomingWork = upcomingWork;
         this.completedWork = completedWork;
-        this.rootHosts = new ArrayList<>();
-        this.rootUrls = new ArrayList<>();
-        this.urlAuditor = new UrlAuditor();
-
+        rootHosts = new ArrayList<>();
     }
 
     @Override
     public void run() {
         PageUrlDetails pageUrlDetails = getPageUrlDetailsFromQueue();
-        completedWork.put(pageUrlDetails.getPageUrl(), pageUrlDetails);
-        removeProcessed(pageUrlDetails);
-        processNewFoundUrls(pageUrlDetails);
+        if(pageUrlDetails!=null){
+            completedWork.put(pageUrlDetails.getPageUrl(), pageUrlDetails);
+            processNewFoundUrls(pageUrlDetails);
+        }
     }
 
     private PageUrlDetails getPageUrlDetailsFromQueue() {
         PageUrlDetails pageUrlDetails = null;
         try {
-            pageUrlDetails = foundUrls.poll(100, TimeUnit.MILLISECONDS);
+            pageUrlDetails = foundUrls.poll(10, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             logger.info(String.format("Could not retrieve from the found urls queue\n%s", e.getMessage()));
         }
@@ -63,7 +58,7 @@ public class UrlMaster implements Runnable {
     private void processNextFoundUrl(String urlString) {
         if (!completedWork.containsKey(urlString) &&
                 !upcomingWork.contains(urlString) &&
-                urlAuditor.isPassingBusinessRuleValidation(urlString, rootHosts)) {
+                UrlAuditor.isPassingBusinessRuleValidation(urlString)) {
             addUrlToUpcomingWorkQueue(urlString);
         }
     }
@@ -77,13 +72,7 @@ public class UrlMaster implements Runnable {
         }
     }
 
-    private void removeProcessed(PageUrlDetails pud) {
-        if (!foundUrls.remove(pud)) {
-            logger.warn(String.format("Could not remove PageUrlDetails url[%s] from found urls queue", pud.getPageUrl()));
-        }
-    }
-
-
+    // TODO: 16/11/2021 Ideally this would be part of constructor
     public void setStartingUrls(String[] args) {
         if (args.length == 0) {
             logger.error("No initial URL provided.");
@@ -101,20 +90,21 @@ public class UrlMaster implements Runnable {
         });
     }
 
-    private void addStartPoint(String nfUrl) {
-        addCrawlRootLocation(nfUrl);
+    private void addStartPoint(String initUrl) {
+        List<String> rootUrls = new ArrayList<>();
+        rootUrls.add(initUrl);
+        addCrawlRootLocation(initUrl);
         try {
             foundUrls.put(new PageUrlDetails(CrawlerConstants.INIT_POINT, rootUrls));
         } catch (InterruptedException e) {
-            logger.error(String.format("Could not add [%s] to the found URL queue", nfUrl));
+            logger.error(String.format("Could not add [%s] to the found URL queue", initUrl));
             logger.error(e.getMessage());
         }
     }
 
 
-    public void addCrawlRootLocation(String argUrl) {
+    private void addCrawlRootLocation(String argUrl) {
         try {
-            rootUrls.add(argUrl);
             URL url = new URL(argUrl);
             String host = url.getHost();
             rootHosts.add(host);
@@ -122,4 +112,9 @@ public class UrlMaster implements Runnable {
             logger.error(String.format("Input argument can not be converted to URL [%s]", e.getMessage()));
         }
     }
+
+    public static List<String> getRootHosts() {
+        return rootHosts;
+    }
+
 }

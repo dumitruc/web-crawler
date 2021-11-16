@@ -1,6 +1,6 @@
 # README #
 
-This is a basic web crawler, to limit to a particular root, i.e. use for a particular website only.
+This is a basic web crawler, takes one root page and navigate any other pages under same hostname.
 
 ### What is this repository for? ###
 
