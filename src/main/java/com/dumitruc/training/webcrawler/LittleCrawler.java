@@ -1,5 +1,8 @@
 package com.dumitruc.training.webcrawler;
 
+import com.dumitruc.training.webcrawler.pageworker.PageOrchestrator;
+import com.dumitruc.training.webcrawler.pageworker.PageUrlDetails;
+import com.dumitruc.training.webcrawler.urlutils.UrlMaster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,7 +46,7 @@ public class LittleCrawler {
 
         closeTheThreads(pageParsers, urlMasterService);
 
-        (new ResultsPublisher(completedWork)).consoleOutAll();
+        (new LogPublisher(completedWork)).consoleOutAll();
         systemMonitor(pageParsers, urlMasterService);
     }
 

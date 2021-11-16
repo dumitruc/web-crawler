@@ -1,5 +1,6 @@
-package com.dumitruc.training.webcrawler;
+package com.dumitruc.training.webcrawler.urlutils;
 
+import com.dumitruc.training.webcrawler.CrawlerConstants;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +34,6 @@ public class UrlAuditor {
         return rootHostStrings.contains(host);
     }
 
-    // TODO: 15/11/2021 Test logic!!!
     public static boolean isParsablePage(String urlString) {
         //Is not a parsable page if is an image or any other media type
         boolean isItParsablePage = !Arrays.stream(CrawlerConstants.NON_PAGE_SUFFIXES)

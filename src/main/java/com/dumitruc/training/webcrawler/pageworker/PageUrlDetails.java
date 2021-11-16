@@ -1,4 +1,4 @@
-package com.dumitruc.training.webcrawler;
+package com.dumitruc.training.webcrawler.pageworker;
 
 import java.util.List;
 

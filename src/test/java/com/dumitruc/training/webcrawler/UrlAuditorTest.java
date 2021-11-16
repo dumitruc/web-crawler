@@ -1,5 +1,7 @@
 package com.dumitruc.training.webcrawler;
 
+import com.dumitruc.training.webcrawler.urlutils.UrlAuditor;
+import com.dumitruc.training.webcrawler.urlutils.UrlMaster;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockedStatic;
@@ -11,7 +13,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.ArgumentMatchers.anyString;
 
 
 public class UrlAuditorTest {
@@ -84,15 +85,25 @@ public class UrlAuditorTest {
         String host = "www.bbc.com";
         List<String> rootHosts = Collections.singletonList(host);
 
-        String urlString = String.format("https://%s/whatever-next.html",host);
+        String urlString = String.format("https://%s/whatever-next.html", host);
 
         try (MockedStatic<UrlMaster> theMock = Mockito.mockStatic(UrlMaster.class)) {
             theMock.when(UrlMaster::getRootHosts).thenReturn(rootHosts);
 
-            assertThat(UrlAuditor.isPassingBusinessRuleValidation(urlString),equalTo(true));
-            assertThat(UrlAuditor.isPassingBusinessRuleValidation("https://bbc.com"),equalTo(false));
+            assertThat(UrlAuditor.isPassingBusinessRuleValidation(urlString), equalTo(true));
+            assertThat(UrlAuditor.isPassingBusinessRuleValidation("https://bbc.com"), equalTo(false));
         }
 
+    }
+
+    @Test
+    public void unparsablePages() {
+        assertThat(UrlAuditor.isParsablePage("https://some-location.com"), equalTo(true));
+        assertThat(UrlAuditor.isParsablePage("https://some-location.com/index.html"), equalTo(true));
+        assertThat(UrlAuditor.isParsablePage("https://some-location.com/kitty.mp3.info"), equalTo(true));
+
+        assertThat(UrlAuditor.isParsablePage("https://some-location.com/index.png"), equalTo(false));
+        assertThat(UrlAuditor.isParsablePage("https://some-location.com/hello.mp3"), equalTo(false));
     }
 
 

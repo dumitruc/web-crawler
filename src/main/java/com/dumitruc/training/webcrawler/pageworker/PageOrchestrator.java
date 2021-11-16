@@ -1,4 +1,4 @@
-package com.dumitruc.training.webcrawler;
+package com.dumitruc.training.webcrawler.pageworker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

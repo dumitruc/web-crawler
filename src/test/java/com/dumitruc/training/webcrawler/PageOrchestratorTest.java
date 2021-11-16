@@ -1,5 +1,8 @@
 package com.dumitruc.training.webcrawler;
 
+import com.dumitruc.training.webcrawler.pageworker.PageOrchestrator;
+import com.dumitruc.training.webcrawler.pageworker.PageParser;
+import com.dumitruc.training.webcrawler.pageworker.PageUrlDetails;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,8 +19,8 @@ public class PageOrchestratorTest {
 
     @Test
     public void scansUrlsFromList() throws InterruptedException {
-        BlockingQueue<String> upcomingWork = new LinkedBlockingDeque<String>();
-        BlockingQueue<PageUrlDetails> foundUrls = new LinkedBlockingDeque<PageUrlDetails>();
+        BlockingQueue<String> upcomingWork = new LinkedBlockingDeque<>();
+        BlockingQueue<PageUrlDetails> foundUrls = new LinkedBlockingDeque<>();
 
         String testUrl = "https://www.bbc.co.uk";
 

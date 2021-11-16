@@ -1,5 +1,6 @@
 package com.dumitruc.training.webcrawler;
 
+import com.dumitruc.training.webcrawler.urlutils.UrlMaster;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,8 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.concurrent.BlockingQueue;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

@@ -1,11 +1,11 @@
 package com.dumitruc.training.webcrawler;
 
+import com.dumitruc.training.webcrawler.urlutils.UrlAuditor;
+import com.dumitruc.training.webcrawler.urlutils.UrlMaster;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-
-import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

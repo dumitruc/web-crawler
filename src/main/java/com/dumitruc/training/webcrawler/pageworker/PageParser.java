@@ -1,5 +1,7 @@
-package com.dumitruc.training.webcrawler;
+package com.dumitruc.training.webcrawler.pageworker;
 
+import com.dumitruc.training.webcrawler.CrawlerConstants;
+import com.dumitruc.training.webcrawler.urlutils.UrlAuditor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
