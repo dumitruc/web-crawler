@@ -10,15 +10,15 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com" level="error">
+        <Logger name="com" level="warn">
             <AppenderRef ref="Console"/>
         </Logger>
         <Logger name="com" level="trace">
             <AppenderRef ref="CrawlerLog"/>
         </Logger>
-        <Root level="trace">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="CrawlerLog"/>
+        <Root>
+            <AppenderRef ref="Console" level="warn"/>
+            <AppenderRef ref="CrawlerLog" level="trace"/>
         </Root>
     </Loggers>
 </Configuration>
