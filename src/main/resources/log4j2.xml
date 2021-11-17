@@ -10,13 +10,14 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="log4j.test.Log4jTest" level="trace">
+        <Logger name="com" level="error">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Root level="error">
-            <AppenderRef ref="Console"/>
-        </Root>
+        <Logger name="com" level="trace">
+            <AppenderRef ref="CrawlerLog"/>
+        </Logger>
         <Root level="trace">
+            <AppenderRef ref="Console"/>
             <AppenderRef ref="CrawlerLog"/>
         </Root>
     </Loggers>

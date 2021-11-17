@@ -7,10 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -18,13 +15,13 @@ public class UrlMaster implements Runnable {
 
     private final BlockingQueue<PageUrlDetails> foundUrls;
     private final BlockingQueue<String> upcomingWork;
-    private final HashMap<String, PageUrlDetails> completedWork;
+    private final Map<String, PageUrlDetails> completedWork;
 
     private static List<String> rootHosts;
 
     private static final Logger logger = LogManager.getLogger(UrlMaster.class);
 
-    // TODO: 16/11/2021 Ideally insteada of using this in constructor, call these queues from LittleCrawler
+    // TODO: 16/11/2021 Ideally instead of using this in constructor, call these queues from LittleCrawler
     public UrlMaster(BlockingQueue<PageUrlDetails> foundUrls, BlockingQueue<String> upcomingWork, HashMap<String, PageUrlDetails> completedWork) {
         this.foundUrls = foundUrls;
         this.upcomingWork = upcomingWork;
@@ -35,7 +32,7 @@ public class UrlMaster implements Runnable {
     @Override
     public void run() {
         PageUrlDetails pageUrlDetails = getPageUrlDetailsFromQueue();
-        if(pageUrlDetails!=null){
+        if (pageUrlDetails != null) {
             completedWork.put(pageUrlDetails.getPageUrl(), pageUrlDetails);
             processNewFoundUrls(pageUrlDetails);
         }
@@ -46,7 +43,7 @@ public class UrlMaster implements Runnable {
         try {
             pageUrlDetails = foundUrls.poll(10, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            logger.info(String.format("Could not retrieve from the found urls queue\n%s", e.getMessage()));
+            logger.info(String.format("Could not retrieve from the found urls queue%n%s", e.getMessage()));
         }
         return pageUrlDetails;
     }
@@ -78,7 +75,7 @@ public class UrlMaster implements Runnable {
     public void setStartingUrls(String[] args) {
         if (args.length == 0) {
             logger.error("No initial URL provided.");
-            System.out.println("Please provided starting URL.");
+            System.err.println("Please provided starting URL.");
         }
         Arrays.stream(args).forEach(url -> {
             if (UrlAuditor.isValidUrl(url)) {
@@ -86,7 +83,7 @@ public class UrlMaster implements Runnable {
             } else {
                 String initErrorMessage = String.format("Starting point URL [%s] not valid, please provide valid URL, e.g. https://www.bbc.co.uk", url);
                 logger.error(initErrorMessage);
-                System.out.println(initErrorMessage);
+                System.err.println(initErrorMessage);
             }
 
         });

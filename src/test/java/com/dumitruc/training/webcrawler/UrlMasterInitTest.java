@@ -20,11 +20,10 @@ public class UrlMasterInitTest {
 
     @Before
     public void testInit() {
-        this.littleCrawler = new LittleCrawler();
+        littleCrawler = new LittleCrawler();
         urlMaster = new UrlMaster(littleCrawler.getFoundUrls(),
                 littleCrawler.getUpcomingWork(),
                 littleCrawler.getCompletedWork());
-
     }
 
 
@@ -70,7 +69,7 @@ public class UrlMasterInitTest {
         String inArg = "I'm bad!";
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(outContent));
 
         //No exception is thrown
         urlMaster.setStartingUrls(new String[]{inArg});
